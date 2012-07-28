@@ -3,6 +3,10 @@ require './walters_parser'
 
 class WaltersApi < Sinatra::Base
 
+  get %r{/creators(?:/([a-z]))?(?:\.json)?} do
+    content_type :json
+    WaltersParser.creators(params[:captures].try(:first)).to_json
+  end
   get %r{/tag/([\w-]+)(?:.json)?} do
     content_type :json
     WaltersParser.tag(params[:captures].first).to_json

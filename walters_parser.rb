@@ -5,6 +5,35 @@ require 'ostruct'
 require 'nokogiri'
 
 class WaltersParser
+  def self._list(type,params={})
+    url = "http://art.thewalters.org/ajax/browse/get-type/?type=#{type}"
+    if params
+      url += params.map { |(k,v)| "&#{k}=#{v}" }.join('')
+    end
+    Nokogiri::HTML(open(url))
+  end
+  def self._creators(letter)
+    _list('creator', letter: letter)
+  end
+  def self._creator_from_listing(c)
+    creator = OpenStruct.new
+    href = c.attr('href')
+    creator.id = href.gsub(/^.*\/creator\//, '').gsub(/\/$/, '')
+    creator.name = c.search('h2').first.text
+    creator.thumbnails = c.search('span.image img').map { |i| i.attr('src') }
+    creator.marshal_dump
+  end
+  def self.creators(letter=nil)
+    if letter
+      doc = _creators(letter)
+      doc.search('a').map { |c| _creator_from_listing(c) }
+    else
+      ('a'..'z').map do |l|
+        doc = _creators(l)
+        doc.search('a').map { |c| _creator_from_listing(c) }
+      end.flatten
+    end
+  end
   def self._tag(name)
     Nokogiri::HTML(open("http://art.thewalters.org/browse/tag/#{name}/"))
   end
@@ -31,7 +60,7 @@ class WaltersParser
     end
   end
   def self._tags(letter)
-    Nokogiri::HTML(open("http://art.thewalters.org/ajax/browse/get-type/?type=tags&letter=#{letter}"))
+    _list('tags', letter: letter)
   end
   def self.tags(letter=nil)
     if letter
@@ -80,7 +109,7 @@ class WaltersParser
     end
   end
   def self._locations
-    Nokogiri::HTML(open("http://art.thewalters.org/ajax/browse/get-type/?type=location"))
+    _list('location')
   end
   def self.locations
     doc = _locations
