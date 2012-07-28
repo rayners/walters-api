@@ -19,19 +19,19 @@ module WaltersApi
       content_type :json
       Parser.mediums.to_json
     end
-    get %r{/creators(?:/([a-z]))?(?:\.json)?} do
+    get %r{/creators(?:/([a-z]))?(?:\.json)$?} do
       content_type :json
       Parser.creators(params[:captures] && params[:captures].first).to_json
     end
-    get %r{/creators/([\w-]+)(?:\.json)?} do
+    get %r{/creators/([\w-]+)(?:\.json)$?} do
       content_type :json
       Parser.creator(params[:captures].first, params[:page]).to_json
     end
-    get %r{/tags(?:/([a-z]))?(?:\.json)?} do
+    get %r{/tags(?:/([a-z]))?(?:\.json)?$} do
       content_type :json
       Parser.tags(params[:captures].try(:first)).to_json
     end
-    get %r{/tags/([\w-]+)(?:.json)?} do
+    get %r{/tags/([\w-]+)(?:.json)?$} do
       content_type :json
       Parser.tag(params[:captures].first).to_json
     end
