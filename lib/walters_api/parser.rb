@@ -35,6 +35,7 @@ module WaltersApi
       pieces = source.search('#object_listing a').map { |p| _piece_from_listing(p)}
       pages = source.search('span.position.end').first.text
       page = source.search('span.digit').first.text
+      page = 1 if page == ''
       { pieces: pieces, page: page, pages: pages }
     end
     def self._date(start_date,end_date,page=1)
@@ -83,6 +84,12 @@ module WaltersApi
         medium.thumbnail = m.search('img').first.attr('src')
         medium.marshal_dump
       end
+    end
+    def self._creator(name,page=1)
+      Nokogiri::HTML(open("http://art.thewalters.org/browse/creator/#{name}/?page=#{page}"))
+    end
+    def self.creator(name,page=1)
+      _paginated_pieces(_creator(name,page))
     end
     def self._creators(letter)
       _list('creator', letter: letter)
