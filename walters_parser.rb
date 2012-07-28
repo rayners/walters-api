@@ -12,29 +12,30 @@ class WaltersParser
     end
     Nokogiri::HTML(open(url))
   end
+  def self._piece_from_listing(p)
+    piece = OpenStruct.new
+    p.attr('href').match(%r{^http://art.thewalters.org/detail/(\d+)/(.*?)/$}) do |m|
+      piece.id = m[1]
+      piece.id_string = m[2]
+    end
+    p.search('tr').each do |r|
+      label = r.search('td.label').first.text
+      if label != 'Tags'
+        piece.send("#{label.downcase}=", r.search('td').first.text)
+      else
+        tags = r.search('td').first.search('span').map { |s| s.text }
+        piece.tags = tags
+        end
+    end
+    piece.thumbnail = p.search('img').first.attr('src')
+    piece.marshal_dump
+  end
   def self._medium(name,page=1)
     Nokogiri::HTML(open("http://art.thewalters.org/browse/medium/#{name}/?page=#{page}"))
   end
   def self.medium(name,page=1)
     doc = _medium(name,page)
-    pieces = doc.search('#object_listing a').map do |p|
-      piece = OpenStruct.new
-      p.attr('href').match(%r{^http://art.thewalters.org/detail/(\d+)/(.*?)/$}) do |m|
-        piece.id = m[1]
-        piece.id_string = m[2]
-      end
-      p.search('tr').each do |r|
-        label = r.search('td.label').first.text
-        if label != 'Tags'
-          piece.send("#{label.downcase}=", r.search('td').first.text)
-        else
-          tags = r.search('td').first.search('span').map { |s| s.text }
-          piece.tags = tags
-        end
-      end
-      piece.thumbnail = p.search('img').first.attr('src')
-      piece.marshal_dump
-    end
+    pieces = doc.search('#object_listing a').map { |p| _piece_from_listing(p)}
     pages = doc.search('span.position.end').first.text
     { pieces: pieces, page: page, pages: pages }
   end
@@ -78,25 +79,8 @@ class WaltersParser
   end
   def self.tag(name)
     doc = _tag(name)
-    doc.search('#object_listing a').map do |p|
-      piece = OpenStruct.new
-      href = p.attr('href')
-      href.match(%r{^http://art.thewalters.org/detail/(\d+)/(.*?)/$}) do |m|
-        piece.id = m[1]
-        piece.id_string = m[2]
-      end
-      p.search('tr').each do |r|
-        label = r.search('td.label').first.text
-        if label != 'Tags'
-          piece.send("#{label.downcase}=", r.search('td').first.text)
-        else
-          tags = r.search('td').first.search('span').map { |s| s.text }
-          piece.tags = tags
-        end
-      end
-      piece.thumbnail = p.search('img').first.attr('src')
-      piece.marshal_dump
-    end
+    doc.search('#object_listing a').map { |p| _piece_from_listing(p) }
+    { pieces: pieces }
   end
   def self._tags(letter)
     _list('tags', letter: letter)
@@ -127,25 +111,7 @@ class WaltersParser
   end
   def self.location(id)
     doc = _location(id)
-    doc.search('#object_listing a').map do |p|
-      piece = OpenStruct.new
-      href = p.attr('href')
-      href.match(%r{^http://art.thewalters.org/detail/(\d+)/(.*?)/$}) do |m|
-        piece.id = m[1]
-        piece.id_string = m[2]
-      end
-      p.search('tr').each do |r|
-        label = r.search('td.label').first.text
-        if label != 'Tags'
-          piece.send("#{label.downcase}=", r.search('td').first.text)
-        else
-          tags = r.search('td').first.search('span').map { |s| s.text }
-          piece.tags = tags
-        end
-      end
-      piece.thumbnail = p.search('img').first.attr('src')
-      piece.marshal_dump
-    end
+    doc.search('#object_listing a').map { |p| _piece_from_listing(p) }
   end
   def self._locations
     _list('location')
@@ -168,7 +134,6 @@ class WaltersParser
   end
   def self.get(id)
     doc = _get(id)
-    # <meta property="og:title" content="Inscribed Pound Weight" />
     obj = OpenStruct.new
     obj.title = doc.search('h1 a').first.text
     doc.search('div.scrollbar').each do |section|
