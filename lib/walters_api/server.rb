@@ -45,9 +45,10 @@ module WaltersApi
       content_type :json
       Parser.locations.to_json
     end
-    get '/detail/:id.?:format?' do
+    get %r{/pieces/(\d+)(?:\.json)?$} do
       content_type :json
-      Parser.get(params[:id]).to_json
+      id = params[:captures].first
+      Parser.get(id).to_json
     end
   end
 end

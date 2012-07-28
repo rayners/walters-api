@@ -172,10 +172,41 @@ module WaltersApi
       doc = _get(id)
       obj = OpenStruct.new
       obj.title = doc.search('h1 a').first.text
-      doc.search('div.scrollbar').each do |section|
-        title = section.search('span').first.text
-        if title == 'Description'
-          obj.description = section.children.last.text.strip
+      doc.search('article.pane').each do |pane|
+        title = pane.search('span').first.text
+        if title != 'Conservation'
+          obj.send("#{title.downcase}=", pane.search('div.scrollbar').first.children.last.text.strip)
+        else
+          obj.conservation = pane.search('tbody tr').map do |r|
+            date = r.search('td.date').first.text
+            description = r.search('td.description').first.text
+            narrative   = r.search('td.narrative').first.text
+            { date: date, description: description, narrative: narrative }
+          end
+        end
+      end
+      obj.image = doc.search('a.button.download').first.attr('href')
+      doc.search('div.column').each do |column|
+        title = column.search('h6').first.text
+        if title == 'Creator'
+          obj.creators = column.search('li a').map do |c|
+            {
+              id: c.attr('href').gsub(%r{^.*/creator/}, '').gsub(%r{/$}, ''),
+              name: c.text
+            }
+          end
+        elsif title == 'Medium'
+        elsif title == 'Geographies'
+        elsif title == 'Location Within Museum'
+          a = column.search('a').first
+          name = a.text
+          obj.location = {
+            id: a.attr('href').gsub(%r{^.*/location/}, '').gsub(%r{/$}, '').strip,
+            name: name.gsub(/^.*:([^:]+)$/, '\1'),
+            location: name.gsub(/:[^:]+$/, '')
+          }
+        else
+          obj.send("#{title.downcase}=", column.children.last.text.strip)
         end
       end
       obj.marshal_dump
