@@ -35,13 +35,11 @@ module WaltersApi
       content_type :json
       Parser.tag(params[:captures].first).to_json
     end
-    get '/locations/:id.json' do
+    get %r{/locations/([\w-]+)(?:\.json)?$} do
       content_type :json
-      Parser.location(params[:id],params[:page]).to_json
-    end
-    get '/locations/:id' do
-      content_type :json
-      Parser.location(params[:id],params[:page]).to_json
+      id = params[:captures].first
+      location = Parser.locations.find { |l| l[:id] == id }
+      Parser.location(id,params[:page]).merge(location).to_json
     end
     get '/locations.?:format?' do
       content_type :json
