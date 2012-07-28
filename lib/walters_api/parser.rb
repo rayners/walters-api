@@ -31,14 +31,25 @@ module WaltersApi
       piece.thumbnail = p.search('img').first.attr('src')
       piece.marshal_dump
     end
+    def self._paginated_pieces(source)
+      pieces = source.search('#object_listing a').map { |p| _piece_from_listing(p)}
+      pages = source.search('span.position.end').first.text
+      page = source.search('span.digit').first.text
+      { pieces: pieces, page: page, pages: pages }
+    end
+    def self._date(start_date,end_date,page=1)
+    end
+    def self.date(start_date,end_date,page=1)
+      doc = _date(start_date,end_date,page)
+      pieces = doc.search('#object_listing a').map { |p| _piece_from_listing(p)}
+      pages = doc.search('span.position.end').first.text
+      { pieces: pieces, page: page, pages: pages }
+    end
     def self._place(name,page=1)
       Nokogiri::HTML(open("http://art.thewalters.org/browse/place/#{name}/?page=#{page}"))
     end
     def self.place(name,page=1)
-      doc = _place(name,page)
-      pieces = doc.search('#object_listing a').map { |p| _piece_from_listing(p)}
-      pages = doc.search('span.position.end').first.text
-      { pieces: pieces, page: page, pages: pages }
+      _paginated_pieces(_place(name,page))
     end
     def self._places
       _list('places')
@@ -58,10 +69,7 @@ module WaltersApi
       Nokogiri::HTML(open("http://art.thewalters.org/browse/medium/#{name}/?page=#{page}"))
     end
     def self.medium(name,page=1)
-      doc = _medium(name,page)
-      pieces = doc.search('#object_listing a').map { |p| _piece_from_listing(p)}
-      pages = doc.search('span.position.end').first.text
-      { pieces: pieces, page: page, pages: pages }
+      _paginated_pieces(_medium(name,page))
     end
     def self._mediums
       _list('medium')
@@ -98,13 +106,11 @@ module WaltersApi
         end.flatten
       end
     end
-    def self._tag(name)
-      Nokogiri::HTML(open("http://art.thewalters.org/browse/tag/#{name}/"))
+    def self._tag(name,page=1)
+      Nokogiri::HTML(open("http://art.thewalters.org/browse/tag/#{name}/?page=#{page}"))
     end
-    def self.tag(name)
-      doc = _tag(name)
-      doc.search('#object_listing a').map { |p| _piece_from_listing(p) }
-      { pieces: pieces }
+    def self.tag(name,page=1)
+      _paginated_pieces(_tag(name,page))
     end
     def self._tags(letter)
       _list('tags', letter: letter)
@@ -130,12 +136,11 @@ module WaltersApi
         end.flatten
       end
     end
-    def self._location(id)
-      Nokogiri::HTML(open("http://art.thewalters.org/browse/location/#{id}/"))
+    def self._location(id,page=1)
+      Nokogiri::HTML(open("http://art.thewalters.org/browse/location/#{id}/?page=#{page}"))
     end
-    def self.location(id)
-      doc = _location(id)
-      doc.search('#object_listing a').map { |p| _piece_from_listing(p) }
+    def self.location(id,page=1)
+      _paginated_pieces(_location(id,page))
     end
     def self._locations
       _list('location')

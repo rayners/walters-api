@@ -33,11 +33,11 @@ module WaltersApi
     end
     get '/location/:id.json' do
       content_type :json
-      Parser.location(params[:id]).to_json
+      Parser.location(params[:id],params[:page]).to_json
     end
     get '/location/:id' do
       content_type :json
-      Parser.location(params[:id]).to_json
+      Parser.location(params[:id],params[:page]).to_json
     end
     get '/locations.?:format?' do
       content_type :json
