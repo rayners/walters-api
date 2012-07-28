@@ -1,6 +1,3 @@
-
-require './lib/walters_api/parser'
-
 module WaltersApi
   class Server < Sinatra::Base
 
