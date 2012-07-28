@@ -14,6 +14,12 @@ class WaltersParser
     # <meta property="og:title" content="Inscribed Pound Weight" />
     obj = OpenStruct.new
     obj.title = doc.search('h1 a').first.text
+    doc.search('div.scrollbar').each do |section|
+      title = section.search('span').first.text
+      if title == 'Description'
+        obj.description = section.children.last.text.strip
+      end
+    end
     obj.marshal_dump
   end
 end
