@@ -209,6 +209,8 @@ module WaltersApi
           obj.send("#{title.downcase}=", column.children.last.text.strip)
         end
       end
+      obj.tags = doc.search('#tag_container a').map { |t| t.text }
+      obj.related = doc.search('aside.related a').map { |r| _piece_from_listing(r) }
       obj.marshal_dump
     end
   end
