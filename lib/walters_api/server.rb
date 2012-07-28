@@ -29,7 +29,7 @@ module WaltersApi
     end
     get %r{/tags(?:/([a-z]))?(?:\.json)?$} do
       content_type :json
-      Parser.tags(params[:captures].try(:first)).to_json
+      Parser.tags(params[:captures] && params[:captures].first).to_json
     end
     get %r{/tags/([\w-]+)(?:.json)?$} do
       content_type :json

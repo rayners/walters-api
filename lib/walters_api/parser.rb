@@ -4,6 +4,8 @@ require 'net/http'
 require 'ostruct'
 require 'nokogiri'
 
+$cache = {}
+
 module WaltersApi
   class Parser
     def self._list(type,params={})
@@ -56,6 +58,9 @@ module WaltersApi
       _list('places')
     end
     def self.places
+      if $cache['places']
+        return $cache['places']
+      end
       doc = _places
       places = doc.search('a').map do |p|
         place = OpenStruct.new
@@ -64,7 +69,7 @@ module WaltersApi
         place.thumbnails = p.search('img').map { |i| i.attr('src') }
         place.marshal_dump
       end
-      { places: places }
+      $cache['places'] = { places: places }
     end
     def self._medium(name,page=1)
       Nokogiri::HTML(open("http://art.thewalters.org/browse/medium/#{name}/?page=#{page}"))
@@ -76,8 +81,11 @@ module WaltersApi
       _list('medium')
     end
     def self.mediums
+      if $cache['mediums']
+        return $cache['mediums']
+      end
       doc = _mediums
-      doc.search('a').map do |m|
+      $cache['mediums'] = doc.search('a').map do |m|
         medium = OpenStruct.new
         medium.id = m.attr('href').gsub(%r{^.*/medium/}, '').gsub(%r{/$}, '')
         medium.name = m.search('h2').first.text
@@ -104,10 +112,16 @@ module WaltersApi
     end
     def self.creators(letter=nil)
       if letter
+        if $cache["creators_#{letter}"]
+          return $cache["creators_#{letter}"]
+        end
         doc = _creators(letter)
-        doc.search('a').map { |c| _creator_from_listing(c) }
+        $cache["creators_#{letter}"] = doc.search('a').map { |c| _creator_from_listing(c) }
       else
-        ('a'..'z').map do |l|
+        if $cache['creators']
+          return $cache['creators']
+        end
+        $cache['creators'] = ('a'..'z').map do |l|
           doc = _creators(l)
           doc.search('a').map { |c| _creator_from_listing(c) }
         end.flatten
@@ -124,15 +138,21 @@ module WaltersApi
     end
     def self.tags(letter=nil)
       if letter
+        if $cache["tags_#{letter}"]
+          return $cache["tags_#{letter}"]
+        end
         doc = _tags(letter)
-        doc.search('a').map do |t|
+        $cache["tags_#{letter}"] = doc.search('a').map do |t|
           tag = OpenStruct.new
           tag.id = t.search('h2').first.children.first.text
           tag.count = t.search('span.count').first.text
           tag.marshal_dump
         end
       else
-        ('a'..'z').map do |l|
+        if $cache['tags']
+          return $cache['tags']
+        end
+        $cache['tags'] = ('a'..'z').map do |l|
           doc = _tags(l)
           doc.search('a').map do |t|
             tag = OpenStruct.new
@@ -147,14 +167,20 @@ module WaltersApi
       Nokogiri::HTML(open("http://art.thewalters.org/browse/location/#{id}/?page=#{page}"))
     end
     def self.location(id,page=1)
-      _paginated_pieces(_location(id,page))
+      if $cache["locations_#{id}_#{page}"]
+        return $cache["locations_#{id}_#{page}"]
+      end
+      $cache["locations_#{id}_#{page}"] = _paginated_pieces(_location(id,page))
     end
     def self._locations
       _list('location')
     end
     def self.locations
+      if $cache['locations']
+        return $cache['locations']
+      end
       doc = _locations
-      doc.search('a').map do |l|
+      $cache['locations'] = doc.search('a').map do |l|
         loc = OpenStruct.new
         href = l.attr('href')
         loc.id = href.gsub(/^.*location\//, '').gsub(/\/$/, '')
@@ -169,6 +195,9 @@ module WaltersApi
       Nokogiri::HTML(open("http://art.thewalters.org/detail/#{id}"))
     end
     def self.get(id)
+      if $cache["pieces_#{id}"]
+        return $cache["pieces_#{id}"]
+      end
       doc = _get(id)
       obj = OpenStruct.new
       obj.title = doc.search('h1 a').first.text
@@ -223,7 +252,7 @@ module WaltersApi
       end
       obj.tags = doc.search('#tag_container a').map { |t| t.text }
       obj.related = doc.search('aside.related a').map { |r| _piece_from_listing(r) }
-      obj.marshal_dump
+      $cache["pieces_#{id}"] = obj.marshal_dump
     end
   end
 end
