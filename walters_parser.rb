@@ -30,6 +30,20 @@ class WaltersParser
     piece.thumbnail = p.search('img').first.attr('src')
     piece.marshal_dump
   end
+  def self._places
+    _list('places')
+  end
+  def self.places
+    doc = _places
+    places = doc.search('a').map do |p|
+      place = OpenStruct.new
+      place.id = p.attr('href').gsub(%r{^.*/place/}, '').gsub(%r{/$}, '')
+      place.name = p.search('h2').first.text
+      place.thumbnails = p.search('img').map { |i| i.attr('src') }
+      place.marshal_dump
+    end
+    { places: places }
+  end
   def self._medium(name,page=1)
     Nokogiri::HTML(open("http://art.thewalters.org/browse/medium/#{name}/?page=#{page}"))
   end

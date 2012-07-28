@@ -3,6 +3,10 @@ require './walters_parser'
 
 class WaltersApi < Sinatra::Base
 
+  get %r{/places(?:\.json)?} do
+    content_type :json
+    WaltersParser.places.to_json
+  end
   get %r{/medium/([\w-]+)(?:\.json)?} do
     content_type :json
     WaltersParser.medium(params[:captures].first, params[:page]).to_json
