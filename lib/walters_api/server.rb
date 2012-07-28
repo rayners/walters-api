@@ -1,3 +1,5 @@
+require 'sinatra/base'
+require 'json'
 module WaltersApi
   class Server < Sinatra::Base
 

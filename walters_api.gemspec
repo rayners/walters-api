@@ -14,5 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "walters_api"
   gem.require_paths = ["lib"]
   gem.version       = WaltersApi::VERSION
-  gem.add_runtime_dependency "nokogiri"
+  gem.add_dependency "nokogiri", "~> 1.5"
+  gem.add_dependency "sinatra", "~> 1.3"
+  gem.add_dependency "json", "~> 1.7"
 end
