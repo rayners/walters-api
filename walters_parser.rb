@@ -5,6 +5,55 @@ require 'ostruct'
 require 'nokogiri'
 
 class WaltersParser
+  def self._tag(name)
+    Nokogiri::HTML(open("http://art.thewalters.org/browse/tag/#{name}/"))
+  end
+  def self.tag(name)
+    doc = _tag(name)
+    doc.search('#object_listing a').map do |p|
+      piece = OpenStruct.new
+      href = p.attr('href')
+      href.match(%r{^http://art.thewalters.org/detail/(\d+)/(.*?)/$}) do |m|
+        piece.id = m[1]
+        piece.id_string = m[2]
+      end
+      p.search('tr').each do |r|
+        label = r.search('td.label').first.text
+        if label != 'Tags'
+          piece.send("#{label.downcase}=", r.search('td').first.text)
+        else
+          tags = r.search('td').first.search('span').map { |s| s.text }
+          piece.tags = tags
+        end
+      end
+      piece.thumbnail = p.search('img').first.attr('src')
+      piece.marshal_dump
+    end
+  end
+  def self._tags(letter)
+    Nokogiri::HTML(open("http://art.thewalters.org/browse/?type=tags&letter=#{letter}"))
+  end
+  def self.tags(letter=nil)
+    if letter
+      doc = _tags(letter)
+      doc.search('#browse_listing a').map do |t|
+        tag = OpenStruct.new
+        tag.id = t.search('h2').first.children.first.text
+        tag.count = t.search('span.count').first.text
+        tag.marshal_dump
+      end
+    else
+      ('a'..'z').map do |l|
+        doc = _tags(l)
+        doc.search('#browse_listing a').map do |t|
+          tag = OpenStruct.new
+          tag.id = t.search('h2').first.children.first.text
+          tag.count = t.search('span.count').first.text
+          tag.marshal_dump
+        end
+      end.flatten
+    end
+  end
   def self._location(id)
     Nokogiri::HTML(open("http://art.thewalters.org/browse/location/#{id}/"))
   end
