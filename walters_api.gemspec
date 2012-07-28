@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["rayners@gmail.com"]
   gem.description   = %q{API for Walters Art Museum in Baltimore}
   gem.summary       = %q{API for Walters Art Museum in Baltimore}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/rayners/walters-api"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
