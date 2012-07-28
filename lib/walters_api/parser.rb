@@ -159,7 +159,7 @@ module WaltersApi
         href = l.attr('href')
         loc.id = href.gsub(/^.*location\//, '').gsub(/\/$/, '')
         loc.name = l.search('img').first.attr('alt')
-        loc.location = l.search('p').first.text
+        loc.location = l.search('p').first.text.gsub(/^Museum Location:/, '').strip
         loc.thumbnail = l.search('img').first.attr('src')
         loc.marshal_dump
       end
