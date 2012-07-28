@@ -1,12 +1,12 @@
-source :rubygems
-gem 'sinatra'
+source 'https://rubygems.org'
 
 group :development do
   gem 'shotgun'
   gem 'heroku'
 end
 
+gem 'sinatra'
 gem 'json'
-gem 'mongo'
-gem 'mongo_mapper'
-gem 'nokogiri'
+
+# Specify your gem's dependencies in walters_api.gemspec
+gemspec

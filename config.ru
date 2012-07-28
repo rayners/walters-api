@@ -3,5 +3,5 @@ require 'bundler'
 
 Bundler.require
 
-require './app.rb'
-run WaltersApi
+require './lib/walters_api/server'
+run WaltersApi::Server
