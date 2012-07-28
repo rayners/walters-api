@@ -3,7 +3,7 @@ require 'json'
 module WaltersApi
   class Server < Sinatra::Base
 
-    get %r{/place/([\w-]+)(?:\.json)?} do
+    get %r{/places/([\w-]+)(?:\.json)?} do
       content_type :json
       Parser.place(params[:captures].first).to_json
     end
@@ -11,7 +11,7 @@ module WaltersApi
       content_type :json
       Parser.places.to_json
     end
-    get %r{/medium/([\w-]+)(?:\.json)?} do
+    get %r{/mediums/([\w-]+)(?:\.json)?} do
       content_type :json
       Parser.medium(params[:captures].first, params[:page]).to_json
     end
@@ -19,27 +19,27 @@ module WaltersApi
       content_type :json
       Parser.mediums.to_json
     end
-    get %r{/creator/([\w-]+)(?:\.json)?} do
-      content_type :json
-      Parser.creator(params[:captures].first, params[:page]).to_json
-    end
     get %r{/creators(?:/([a-z]))?(?:\.json)?} do
       content_type :json
       Parser.creators(params[:captures] && params[:captures].first).to_json
     end
-    get %r{/tag/([\w-]+)(?:.json)?} do
+    get %r{/creators/([\w-]+)(?:\.json)?} do
       content_type :json
-      Parser.tag(params[:captures].first).to_json
+      Parser.creator(params[:captures].first, params[:page]).to_json
     end
     get %r{/tags(?:/([a-z]))?(?:\.json)?} do
       content_type :json
       Parser.tags(params[:captures].try(:first)).to_json
     end
-    get '/location/:id.json' do
+    get %r{/tags/([\w-]+)(?:.json)?} do
+      content_type :json
+      Parser.tag(params[:captures].first).to_json
+    end
+    get '/locations/:id.json' do
       content_type :json
       Parser.location(params[:id],params[:page]).to_json
     end
-    get '/location/:id' do
+    get '/locations/:id' do
       content_type :json
       Parser.location(params[:id],params[:page]).to_json
     end
