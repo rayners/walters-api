@@ -3,9 +3,9 @@ require 'json'
 module WaltersApi
   class Server < Sinatra::Base
 
-    get %r{/place/([\w-]+?)(?:\.json)?} do
+    get %r{/place/([\w-]+)(?:\.json)?} do
       content_type :json
-      Parser.place(params[:captures].first)
+      Parser.place(params[:captures].first).to_json
     end
     get %r{/places(?:\.json)?} do
       content_type :json

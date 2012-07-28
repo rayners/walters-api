@@ -31,6 +31,15 @@ module WaltersApi
       piece.thumbnail = p.search('img').first.attr('src')
       piece.marshal_dump
     end
+    def self._place(name,page=1)
+      Nokogiri::HTML(open("http://art.thewalters.org/browse/place/#{name}/?page=#{page}"))
+    end
+    def self.place(name,page=1)
+      doc = _place(name,page)
+      pieces = doc.search('#object_listing a').map { |p| _piece_from_listing(p)}
+      pages = doc.search('span.position.end').first.text
+      { pieces: pieces, page: page, pages: pages }
+    end
     def self._places
       _list('places')
     end
