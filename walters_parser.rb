@@ -12,6 +12,45 @@ class WaltersParser
     end
     Nokogiri::HTML(open(url))
   end
+  def self._medium(name,page=1)
+    Nokogiri::HTML(open("http://art.thewalters.org/browse/medium/#{name}/?page=#{page}"))
+  end
+  def self.medium(name,page=1)
+    doc = _medium(name,page)
+    pieces = doc.search('#object_listing a').map do |p|
+      piece = OpenStruct.new
+      p.attr('href').match(%r{^http://art.thewalters.org/detail/(\d+)/(.*?)/$}) do |m|
+        piece.id = m[1]
+        piece.id_string = m[2]
+      end
+      p.search('tr').each do |r|
+        label = r.search('td.label').first.text
+        if label != 'Tags'
+          piece.send("#{label.downcase}=", r.search('td').first.text)
+        else
+          tags = r.search('td').first.search('span').map { |s| s.text }
+          piece.tags = tags
+        end
+      end
+      piece.thumbnail = p.search('img').first.attr('src')
+      piece.marshal_dump
+    end
+    pages = doc.search('span.position.end').first.text
+    { pieces: pieces, page: page, pages: pages }
+  end
+  def self._mediums
+    _list('medium')
+  end
+  def self.mediums
+    doc = _mediums
+    doc.search('a').map do |m|
+      medium = OpenStruct.new
+      medium.id = m.attr('href').gsub(%r{^.*/medium/}, '').gsub(%r{/$}, '')
+      medium.name = m.search('h2').first.text
+      medium.thumbnail = m.search('img').first.attr('src')
+      medium.marshal_dump
+    end
+  end
   def self._creators(letter)
     _list('creator', letter: letter)
   end
