@@ -31,12 +31,12 @@ class WaltersParser
     end
   end
   def self._tags(letter)
-    Nokogiri::HTML(open("http://art.thewalters.org/browse/?type=tags&letter=#{letter}"))
+    Nokogiri::HTML(open("http://art.thewalters.org/ajax/browse/get-type/?type=tags&letter=#{letter}"))
   end
   def self.tags(letter=nil)
     if letter
       doc = _tags(letter)
-      doc.search('#browse_listing a').map do |t|
+      doc.search('a').map do |t|
         tag = OpenStruct.new
         tag.id = t.search('h2').first.children.first.text
         tag.count = t.search('span.count').first.text
@@ -45,7 +45,7 @@ class WaltersParser
     else
       ('a'..'z').map do |l|
         doc = _tags(l)
-        doc.search('#browse_listing a').map do |t|
+        doc.search('a').map do |t|
           tag = OpenStruct.new
           tag.id = t.search('h2').first.children.first.text
           tag.count = t.search('span.count').first.text
