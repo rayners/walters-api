@@ -196,14 +196,26 @@ module WaltersApi
             }
           end
         elsif title == 'Medium'
+          obj.medium = {
+            id: column.search('a').first.attr('href').gsub(%r{^.*/medium/([\w-]+)/$}, '\1').strip,
+            details: column.search('br').first.previous_sibling.text.strip
+          }
         elsif title == 'Geographies'
+          obj.geographies = column.search('li').map do |l|
+            a = l.search('a').first
+            {
+              id: a.attr('href').gsub(%r{^.*/place/([\w-]+)/$}, '\1').strip,
+              details: a.text.strip,
+              type: a.next_sibling.text.strip
+            }
+          end
         elsif title == 'Location Within Museum'
           a = column.search('a').first
           name = a.text
           obj.location = {
             id: a.attr('href').gsub(%r{^.*/location/}, '').gsub(%r{/$}, '').strip,
-            name: name.gsub(/^.*:([^:]+)$/, '\1'),
-            location: name.gsub(/:[^:]+$/, '')
+            name: name.gsub(/^.*:([^:]+)$/, '\1').strip,
+            location: name.gsub(/:[^:]+$/, '').strip
           }
         else
           obj.send("#{title.downcase}=", column.children.last.text.strip)
