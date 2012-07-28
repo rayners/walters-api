@@ -80,11 +80,11 @@ class WaltersParser
     end
   end
   def self._locations
-    Nokogiri::HTML(open("http://art.thewalters.org/browse/?type=location"))
+    Nokogiri::HTML(open("http://art.thewalters.org/ajax/browse/get-type/?type=location"))
   end
   def self.locations
     doc = _locations
-    doc.search('#browse_listing a').map do |l|
+    doc.search('a').map do |l|
       loc = OpenStruct.new
       href = l.attr('href')
       loc.id = href.gsub(/^.*location\//, '').gsub(/\/$/, '')
