@@ -5,14 +5,40 @@ require 'ostruct'
 require 'nokogiri'
 
 class WaltersParser
+  def self._location(id)
+    Nokogiri::HTML(open("http://art.thewalters.org/browse/location/#{id}/"))
+  end
+  def self.location(id)
+    doc = _location(id)
+    doc.search('#object_listing a').map do |p|
+      piece = OpenStruct.new
+      href = p.attr('href')
+      href.match(%r{^http://art.thewalters.org/detail/(\d+)/(.*?)/$}) do |m|
+        piece.id = m[1]
+        piece.id_string = m[2]
+      end
+      p.search('tr').each do |r|
+        label = r.search('td.label').first.text
+        if label != 'Tags'
+          piece.send("#{label.downcase}=", r.search('td').first.text)
+        else
+          tags = r.search('td').first.search('span').map { |s| s.text }
+          piece.tags = tags
+        end
+      end
+      piece.thumbnail = p.search('img').first.attr('src')
+      piece.marshal_dump
+    end
+  end
   def self._locations
     Nokogiri::HTML(open("http://art.thewalters.org/browse/?type=location"))
   end
   def self.locations
     doc = _locations
-    museum_locations = []
-    doc.search('figure.museum_location').map do |l|
+    doc.search('#browse_listing a').map do |l|
       loc = OpenStruct.new
+      href = l.attr('href')
+      loc.id = href.gsub(/^.*location\//, '').gsub(/\/$/, '')
       loc.name = l.search('h2').first.text
       loc.location = l.search('p').first.text
       loc.thumbnail = l.search('img').first.attr('src')
