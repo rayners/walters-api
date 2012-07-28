@@ -158,7 +158,7 @@ module WaltersApi
         loc = OpenStruct.new
         href = l.attr('href')
         loc.id = href.gsub(/^.*location\//, '').gsub(/\/$/, '')
-        loc.name = l.search('h2').first.text
+        loc.name = l.search('img').first.attr('alt')
         loc.location = l.search('p').first.text
         loc.thumbnail = l.search('img').first.attr('src')
         loc.marshal_dump
