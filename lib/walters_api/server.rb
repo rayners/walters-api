@@ -2,7 +2,10 @@ require 'sinatra/base'
 require 'json'
 module WaltersApi
   class Server < Sinatra::Base
-
+    configure do
+      enable :static
+      set :public_folder, 'public'
+    end
     get %r{/places/([\w-]+)(?:\.json)?} do
       content_type :json
       Parser.place(params[:captures].first).to_json
