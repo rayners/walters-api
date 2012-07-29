@@ -2,30 +2,6 @@
 
 The Walters Art Museum in Baltimore, Maryland is internationally renowned for its collection of art. This is the API to access information about the art collection in the Walters.
 
-## Places
-/places.json
-/places/${PLACE}.json
-
-## Mediums
-/mediums.json
-/mediums/${MEDIUM}.json
-
-## Creators
-/creators.json
-/creators/${CREATOR}.json
-
-## Tags
-/tags.json
-/tags/${TAG}.json
-
-## Locations
-/locations.json
-/locations/${LOCATION}.json
-
-## Pieces
-/pieces.json
-/pieces/${PIECE}.json
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -42,7 +18,29 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Places
+/places.json
+/places/${PLACE}.json
+
+### Mediums
+/mediums.json
+/mediums/${MEDIUM}.json
+
+### Creators
+/creators.json
+/creators/${CREATOR}.json
+
+### Tags
+/tags.json
+/tags/${TAG}.json
+
+### Locations
+/locations.json
+/locations/${LOCATION}.json
+
+### Pieces
+/pieces.json
+/pieces/${PIECE}.json
 
 ## Contributing
 
