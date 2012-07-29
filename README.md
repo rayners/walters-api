@@ -1,6 +1,6 @@
 # WaltersApi
 
-The Walters Art Museum in Baltimore, Maryland is internationally renowned for its collection of art. This is the API to access information about the art collection in the Walters.
+The Walters Art Museum in Baltimore, Maryland is internationally renowned for its collection of art. This is an API to access information about the art collection there.
 
 ## Installation
 
@@ -19,28 +19,65 @@ Or install it yourself as:
 ## Usage
 
 ### Places
-/places.json
-/places/${PLACE}.json
+/places
+  Ex:
+    {
+    "places": [
+        {
+            "id": "afghanistan",
+            "name": "Afghanistan",
+            "thumbnails": [
+                {
+                    "url": "http://art.thewalters.org/images/art/thumbnails/s_cps_w652162a_fp_dd.jpg"
+                },
+                {
+                    "url": "http://art.thewalters.org/images/art/thumbnails/s_cps_w602472b_fp_dd.jpg"
+                },
+                {
+                    "url": "http://art.thewalters.org/images/art/thumbnails/s_cps_w602493a_fp_dd.jpg"
+                }
+            ]
+        }
+    ]
+    }
+/places/${PLACE}
+  Ex: /places/Afghanistan
+    {
+    "pieces": [
+        {
+            "id": "7066",
+            "id_string": "book-of-kings-shahnama",
+            "title": "Book of Kings (Shahnama)",
+            "period": "1028 AH/AD 1618-1619 (Qajar)",
+            "accession": "W.602",
+            "thumbnail": {
+                "url": "http://art.thewalters.org/images/art/thumbnails/cps_w602binding_topext_dd.jpg",
+                "width": "235",
+                "height": "338"
+            }
+        }
+    ]
+    }
 
 ### Mediums
-/mediums.json
-/mediums/${MEDIUM}.json
+/mediums
+/mediums/${MEDIUM}
 
 ### Creators
-/creators.json
-/creators/${CREATOR}.json
+/creators
+/creators/${CREATOR}
 
 ### Tags
-/tags.json
-/tags/${TAG}.json
+/tags
+/tags/${TAG}
 
 ### Locations
-/locations.json
-/locations/${LOCATION}.json
+/locations
+/locations/${LOCATION}
 
 ### Pieces
-/pieces.json
-/pieces/${PIECE}.json
+/pieces
+/pieces/${PIECE}
 
 ## Contributing
 
