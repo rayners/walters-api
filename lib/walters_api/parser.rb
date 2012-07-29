@@ -221,7 +221,7 @@ module WaltersApi
           end
         end
       end
-      obj.image = doc.search('a.button.download').first.attr('href')
+      obj.image = { url: doc.search('a.button.download').first.attr('href') }
       doc.search('div.column').each do |column|
         title = column.search('h6').first.text
         if title == 'Creator'
