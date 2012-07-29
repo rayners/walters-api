@@ -21,6 +21,7 @@ Or install it yourself as:
 ### Places
 /places
   Ex:
+  
     {
     "places": [
         {
@@ -42,6 +43,7 @@ Or install it yourself as:
     }
 /places/${PLACE}
   Ex: /places/Afghanistan
+
     {
     "pieces": [
         {
