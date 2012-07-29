@@ -30,7 +30,12 @@ module WaltersApi
           piece.tags = tags
         end
       end
-      piece.thumbnail = p.search('img').first.attr('src')
+      img = p.search('img').first
+      piece.thumbnail = {
+        url:    img.attr('src'),
+        width:  img.attr('width'),
+        height: img.attr('height')
+      }
       piece.marshal_dump
     end
     def self._paginated_pieces(source)
@@ -66,7 +71,7 @@ module WaltersApi
         place = OpenStruct.new
         place.id = p.attr('href').gsub(%r{^.*/place/}, '').gsub(%r{/$}, '')
         place.name = p.search('h2').first.text
-        place.thumbnails = p.search('img').map { |i| i.attr('src') }
+        place.thumbnails = p.search('img').map { |i| { url: i.attr('src') } }
         place.marshal_dump
       end
       $cache['places'] = { places: places }
@@ -89,7 +94,7 @@ module WaltersApi
         medium = OpenStruct.new
         medium.id = m.attr('href').gsub(%r{^.*/medium/}, '').gsub(%r{/$}, '')
         medium.name = m.search('h2').first.text
-        medium.thumbnail = m.search('img').first.attr('src')
+        medium.thumbnail = { url: m.search('img').first.attr('src') }
         medium.marshal_dump
       end
     end
@@ -107,7 +112,7 @@ module WaltersApi
       href = c.attr('href')
       creator.id = href.gsub(/^.*\/creator\//, '').gsub(/\/$/, '')
       creator.name = c.search('h2').first.text
-      creator.thumbnails = c.search('span.image img').map { |i| i.attr('src') }
+      creator.thumbnails = c.search('span.image img').map { |i| { url: i.attr('src') } }
       creator.marshal_dump
     end
     def self.creators(letter=nil)
@@ -186,7 +191,9 @@ module WaltersApi
         loc.id = href.gsub(/^.*location\//, '').gsub(/\/$/, '')
         loc.name = l.search('img').first.attr('alt')
         loc.location = l.search('p').first.text.gsub(/^Museum Location:/, '').strip
-        loc.thumbnail = l.search('img').first.attr('src')
+        loc.thumbnail = {
+          url: l.search('img').first.attr('src')
+        }
         loc.marshal_dump
       end
     end
