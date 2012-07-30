@@ -35,7 +35,6 @@ function by_tags() {
   svg.selectAll('line').remove();
   svg.selectAll('circle').remove();
   d3.json('http://walters-api.herokuapp.com/tags.json', function(json) {
-    json = JSON.parse(json);
     var node = svg.selectAll('g.node')
           .data(bubble.nodes({ children: _.sortBy(json, function(d) { return -d.count; }) }).filter(function(d) { return d.count && !d.children; }))
           .enter().append('g')
