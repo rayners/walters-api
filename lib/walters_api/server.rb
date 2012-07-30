@@ -6,6 +6,7 @@ module WaltersApi
       enable :static
       #enable :cross_origin
       set :public_folder, 'public'
+      set :protection, :except => :json_csrf
     end
     get %r{/places/([\w-]+)(?:\.json)?} do
       content_type :json
