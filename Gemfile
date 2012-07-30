@@ -7,4 +7,5 @@ group :development do
 end
 
 # Specify your gem's dependencies in walters_api.gemspec
+gem 'rack-cors', :require => 'rack/cors'
 gemspec
