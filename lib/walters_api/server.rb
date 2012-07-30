@@ -1,7 +1,14 @@
 require 'sinatra/base'
 require 'json'
+require 'rack/cors'
 module WaltersApi
   class Server < Sinatra::Base
+    use Rack::Cors do
+      allow do
+        origins '*'
+        .resource '/*', :headers => :any, :methods => :get
+      end
+    end
     configure do
       enable :static
       enable :cross_origin
