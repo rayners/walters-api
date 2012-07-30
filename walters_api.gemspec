@@ -17,5 +17,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency "nokogiri", "~> 1.5"
   gem.add_dependency "sinatra", "~> 1.3"
   gem.add_dependency "json", "~> 1.7"
-  gem.add_dependency "rack_cors"
+  gem.add_dependency "rack-cors"
 end
