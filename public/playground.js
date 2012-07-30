@@ -55,6 +55,7 @@ function by_tags() {
       .attr("dy", ".3em")
       .text(function(d) { return d.id; })
       .style('opacity', 0)
+      .on('click', function(d) { tile_tag(d.id); })
       .transition().duration(750).style('opacity', 1)
     ;
   });
