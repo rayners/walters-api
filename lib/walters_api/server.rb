@@ -13,7 +13,7 @@ module WaltersApi
     end
 
     after do
-      headers['Access-Control-Allow-Origin'] = 'http://localhost:3000/'
+      headers['Access-Control-Allow-Origin'] = 'null'
     end
     get %r{/places/([\w-]+)(?:\.json)?} do
       content_type :json
