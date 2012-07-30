@@ -4,16 +4,8 @@ module WaltersApi
   class Server < Sinatra::Base
     configure do
       enable :static
+      enable :cross_origin
       set :public_folder, 'public'
-    end
-    before do
-      headers['Access-Control-Allow-Origin'] = '*'
-      headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
-      headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-Prototype-Version, X-CSRF-Token'
-    end
-
-    after do
-      headers['Access-Control-Allow-Origin'] = 'null'
     end
     get %r{/places/([\w-]+)(?:\.json)?} do
       content_type :json
