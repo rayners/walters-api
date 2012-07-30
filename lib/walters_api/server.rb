@@ -6,6 +6,15 @@ module WaltersApi
       enable :static
       set :public_folder, 'public'
     end
+    before do
+      headers['Access-Control-Allow-Origin'] = '*'
+      headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+      headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-Prototype-Version, X-CSRF-Token'
+    end
+
+    after do
+      headers['Access-Control-Allow-Origin'] = 'http://localhost:3000/'
+    end
     get %r{/places/([\w-]+)(?:\.json)?} do
       content_type :json
       Parser.place(params[:captures].first).to_json
