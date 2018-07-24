@@ -9,7 +9,7 @@ $cache = {}
 module WaltersApi
   class Parser
     def self._list(type,params={})
-      url = "http://art.thewalters.org/ajax/browse/get-type/?type=#{type}"
+      url = "https://art.thewalters.org/ajax/browse/get-type/?type=#{type}"
       if params
         url += params.map { |(k,v)| "&#{k}=#{v}" }.join('')
     end
@@ -17,7 +17,7 @@ module WaltersApi
     end
     def self._piece_from_listing(p)
       piece = OpenStruct.new
-      p.attr('href').match(%r{^http://art.thewalters.org/detail/(\d+)/(.*?)/$}) do |m|
+      p.attr('href').match(%r{^https://art.thewalters.org/detail/(\d+)/(.*?)/$}) do |m|
         piece.id = m[1]
         piece.id_string = m[2]
       end
@@ -54,7 +54,7 @@ module WaltersApi
       { pieces: pieces, page: page, pages: pages }
     end
     def self._place(name,page=1)
-      Nokogiri::HTML(open("http://art.thewalters.org/browse/place/#{name}/?page=#{page}"))
+      Nokogiri::HTML(open("https://art.thewalters.org/browse/place/#{name}/?page=#{page}"))
     end
     def self.place(name,page=1)
       _paginated_pieces(_place(name,page))
@@ -77,7 +77,7 @@ module WaltersApi
       $cache['places'] = { places: places }
     end
     def self._medium(name,page=1)
-      Nokogiri::HTML(open("http://art.thewalters.org/browse/medium/#{name}/?page=#{page}"))
+      Nokogiri::HTML(open("https://art.thewalters.org/browse/medium/#{name}/?page=#{page}"))
     end
     def self.medium(name,page=1)
       _paginated_pieces(_medium(name,page))
@@ -99,7 +99,7 @@ module WaltersApi
       end
     end
     def self._creator(name,page=1)
-      Nokogiri::HTML(open("http://art.thewalters.org/browse/creator/#{name}/?page=#{page}"))
+      Nokogiri::HTML(open("https://art.thewalters.org/browse/creator/#{name}/?page=#{page}"))
     end
     def self.creator(name,page=1)
       _paginated_pieces(_creator(name,page))
@@ -133,7 +133,7 @@ module WaltersApi
       end
     end
     def self._tag(name,page=1)
-      Nokogiri::HTML(open("http://art.thewalters.org/browse/tag/#{name}/?page=#{page}"))
+      Nokogiri::HTML(open("https://art.thewalters.org/browse/tag/#{name}/?page=#{page}"))
     end
     def self.tag(name,page=1)
       _paginated_pieces(_tag(name,page))
@@ -169,7 +169,7 @@ module WaltersApi
       end
     end
     def self._location(id,page=1)
-      Nokogiri::HTML(open("http://art.thewalters.org/browse/location/#{id}/?page=#{page}"))
+      Nokogiri::HTML(open("https://art.thewalters.org/browse/location/#{id}/?page=#{page}"))
     end
     def self.location(id,page=1)
       if $cache["locations_#{id}_#{page}"]
@@ -198,8 +198,8 @@ module WaltersApi
       end
     end
     def self._get(id)
-      uri = URI("http://art.thewalters.org/detail/#{id}/")
-      Nokogiri::HTML(open("http://art.thewalters.org/detail/#{id}"))
+      uri = URI("https://art.thewalters.org/detail/#{id}/")
+      Nokogiri::HTML(open("https://art.thewalters.org/detail/#{id}"))
     end
     def self.get(id)
       if $cache["pieces_#{id}"]
